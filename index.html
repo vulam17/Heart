@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart</title>
+    <style>
+        *
+        {
+            padding:0;
+            margin:0;
+            box-sizing: border-box;
+        }
+        body
+        {
+            background-color: black;
+        }
+        svg
+        {
+            width: 100%;
+            height: 100%;
+            filter: blur(1px);
+        }
+        .container
+        {
+            width: 900px;
+            height: 900px;
+            margin: auto;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body> 
+    <div class="container">
+        <svg id="s">
+        </svg>
+    </div>
+</body>
+<script>
+   let out, alpha, x, y, xRandom, yRandom, colorAlpha, count = 0, xTranslate = [], yTranslate = [], state = false, xOut, yOut, rateOut
+   let interval = setInterval(change, 1000)
+    for(alpha = 0; alpha <= 2 * Math.PI; alpha+=1/(2 * 200 * Math.PI))
+    {
+            x = 16 * Math.pow(Math.sin(alpha),3)
+            y = - (13 * Math.cos(alpha) - 5 * Math.cos(2 * alpha) - 2 * Math.cos(3 * alpha) - Math.cos(4 * alpha))
+            rate = getRandom(10,100) / 100
+            xRandom = rate * x
+            yRandom = rate * y
+
+            rateOut = getRandom(80,120) / 100
+            xOut = rateOut * x
+            yOut = rateOut * y
+            colorAlpha = (xRandom/x * yRandom/y)   
+            out += `<circle id="${"bdr" + alpha.toString()}" cx="${x * 20 + 450}" cy="${y * 20 + 450}" r="0"/> 
+            <polygon id="${alpha.toString()}" 
+            points="
+            ${xRandom * 20 + 450},${yRandom * 20 + 450} 
+            ${xRandom * 20 + 450 + 6},${yRandom * 20 + 450 - 6}
+            ${xRandom * 20 + 450 - 4},${yRandom * 20 + 450 - 5}
+            ${xRandom * 20 + 450 - 9},${yRandom * 20 + 450 - 2})" style="fill:rgba(255,${colorAlpha * 220} ,${colorAlpha * 220} ,${colorAlpha})"/>
+
+            <circle id="${alpha.toString()}+2" 
+            cx="${xOut * 20 + 450}" cy="${yOut * 20 + 450}" r="1" style="fill:rgba(255,${colorAlpha * 220} ,${colorAlpha * 220} ,${colorAlpha})"/>`
+            
+            xTranslate[count] = (1.05 * x - xRandom) * 20 * 0.2
+            yTranslate[count] = (1.1 * y - yRandom) * 20 * 0.2
+            count++
+    } 
+    document.getElementById("s").innerHTML = out
+
+   function change()
+   {
+    count = 0
+    if(state == false)
+    {
+        for(alpha = 0; alpha <= 2 * Math.PI; alpha+=1/(2 * 200 * Math.PI))
+        {
+        document.getElementById(`${alpha.toString()}`).style.transition = "1s"
+        document.getElementById(`${alpha.toString()}+2`).style.transition = "1s"
+        document.getElementById(`${alpha.toString()}`).style.transform = `translate(${ xTranslate[count]}px,${yTranslate[count]}px)`
+        document.getElementById(`${alpha.toString()}+2`).style.transform = `translate(${ xTranslate[count]}px,${yTranslate[count]}px)`
+        count++
+        }
+        state = true
+    }
+    else
+    {
+        for(alpha = 0; alpha <= 2 * Math.PI; alpha+=1/(2 * 200 * Math.PI))
+        {
+        document.getElementById(`${alpha.toString()}`).style.transition = "0.8s"
+        document.getElementById(`${alpha.toString()}+2`).style.transition = "0.8s"
+        document.getElementById(`${alpha.toString()}`).style.transform = "translate(0,0)"
+        document.getElementById(`${alpha.toString()}+2`).style.transform = "translate(0,0)"
+        count++
+        }
+        state = false
+    }
+   }
+   function getRandom(min,max)
+   {
+    return Math.floor(Math.random() * (max-min) + min)
+   }
+</script> 
+</html>
